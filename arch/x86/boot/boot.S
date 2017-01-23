@@ -146,11 +146,14 @@ wait_ready48:
 	cmpb $0x08,%al;
 	jnz wait_ready48;
 	
-	movw $256,%cx;
 	movw $0x07e0,%bx;
 	movw %bx,%ds;
 	movw $0x00,%bx;
+	movw $5,%si;
 disk_ready48:
+	movw $256,%cx;
+
+read_disk:
 	movw $0x01f0,%dx;
 	in %dx,%ax;
 	movw %ax,(%bx);		#此处原为movb %al,(%bx);，导致了一个错误
@@ -158,7 +161,12 @@ disk_ready48:
 						#But，why???发现好像内存很多的区域都被0填充了，是整个内存都被0填充了？？
 	inc %bx;
 	inc %bx;
-	loop disk_ready48;
+	loop read_disk;
+	
+	decw %si;
+	andw $0xff,%si;	# read five blocks
+	jnz disk_ready48;
+
 	ret;
 
 .org 510
