@@ -1,7 +1,7 @@
 /*
  * init.h
  *
- *  Created on: 2017Äê1ÔÂ7ÈÕ
+ *  Created on: 2017ï¿½ï¿½1ï¿½ï¿½7ï¿½ï¿½
  *      Author: wangqchf
  */
 
@@ -46,7 +46,7 @@ struct all_regs{
 			u8 cl,ch,hcl,hch;
 			u8 al,ah,hal,hah;
 		};
-	}
+	};
 };
 
 //void detect_memory(); TODO detect memory!!
@@ -75,9 +75,10 @@ static inline u16 rdgsw(u16 addr){
 	return ret_value;
 }
 
-static inline u8 fastcall16 intb(u16 port){
+static inline u8 fastcall16 inb(u16 port){
 	u8 return_value;
 	asm volatile("inb %1,%0;":"=a"(return_value):"d"(port));
+	return return_value;
 }
 
 static inline void fastcall16 outb(u8 out,u16 port){
