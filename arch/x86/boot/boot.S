@@ -9,14 +9,14 @@
 .section .btext,"ax"
 .globl _start
 _start:
-	movw $0x9000,%ax;	#设置堆栈段地址
+	movw $0x07c0,%ax;	#设置堆栈段地址
 	movw %ax,%ss;
 	movw $0x07c0,%ax;	#设置数据段地址
 	movw %ax,%ds;
 	movw $0xb800,%ax;	#设置附加段地址指向显示区
 	movw %ax,%es;
 
-	movw $0x0200,%sp;	#设置堆栈段长度为1KB
+	movw $0x0000,%sp;	#栈段长度 = 640K - 实模式代码长度
 
 	movw $loading,%si;
 	movw $0,%di;		#设置di指向缓冲区开始
