@@ -41,6 +41,8 @@ struct all_regs{
 		struct{
 			u8 di1,di2,di3,di4;
 			u8 si1,si2,si3,si4;
+			u8 bp1,bp2,bp3,bp4;
+			u8 sp1,sp2,sp3,sp4;
 			u8 bl,bh,hbl,hbh;
 			u8 dl,dh,hdl,hdh;
 			u8 cl,ch,hcl,hch;
