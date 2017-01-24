@@ -1,11 +1,3 @@
-/*
- * protect_init.s
- *
- *  Created on: 2017Äê1ÔÂ5ÈÕ
- *      Author: wangqchf
- */
-
-
 #include "init.h"
 
 .code16
@@ -22,16 +14,16 @@ location_gdt:
 
 	.globl init;
 init:
-	movw $0x0200,%dx;		#ÉèÖÃ¹â±êÎ»ÖÃ£º3ĞĞ1ÁĞ
+	movw $0x0200,%dx;		#è®¾ç½®å…‰æ ‡ä½ç½®ï¼š3è¡Œ1åˆ—
 	xorw %bx,%bx;
 	movw $0x0200,%ax;
 	int $0x10;
 
-	movw $0x0000,%si;		#²»Ó¦¸ÃÊ¹ÓÃ»ã±àµØÖ·£¬ÒòÎªds²»Îª0x0000
-	movw $0x07e0,%ax;		#ÉèÖÃÊı¾İ¶ÎµØÖ·Îª¼ÓÔØµÄÄÚ´æÎ»ÖÃ
+	movw $0x0000,%si;		#ä¸åº”ä½¿ç”¨æ±‡ç¼–åœ°å€ï¼Œå› ä¸ºåŠ è½½åœ°å€ä¸æ˜¯0
+	movw $0x07e0,%ax;		#æœ¬æ®µç¨‹åºåŠ è½½åœ°å€
 	movw %ax,%ds;
 
-pro_print:					#´òÓ¡Ïà¹ØĞÅÏ¢
+pro_print:					#æ‰“å°ä¿¡æ¯
 	cld;
 	lodsb;
 	andb %al,%al;
@@ -41,40 +33,40 @@ pro_print:					#´òÓ¡Ïà¹ØĞÅÏ¢
 	jmp pro_print;
 	
 	.globl setup_gdt;
-setup_gdt:					#Î´±£»¤Êı¾İ¶Î¼Ä´æÆ÷£¬¿ÉÄÜÓĞÎÊÌâ
+setup_gdt:					#è®¾ç½®GDT
 	pushl %ebp;
 	movl %esp,%ebp;
 
 	pushl %edi;
-	movw $0x1000,%ax;		#½«GDT±í¸ñÉèÖÃÔÚ0x10800¾ø¶ÔµØÖ·´¦
+	movw $0x1000,%ax;		#GDTè¡¨ä½äºå†…å­˜0x10800å¤„
 	movw %ax,%ds;
-	movl $0x0800,%ebx;		#´Ë´¦±ØĞëÊ¹ÓÃ32Î»¼Ä´æÆ÷£¬²»È»±äÖ·Ñ°Ö·GAS±¨´í
+	movl $0x0800,%ebx;		#æ­¤å¤„åº”è¯¥æ˜¯ç”¨32ä½å¯„å­˜å™¨ï¼Œä¸ç„¶GASæŠ¥é”™
 	movl $0x0000,%edi;
 
-	movl $0x00,(%ebx,%edi,4);	#µÚÒ»¸ö¿Õ°×GDTÏî
+	movl $0x00,(%ebx,%edi,4);	#ç©ºGDTé¡¹
 	inc %edi;
 	movl $0x00,(%ebx,%edi,4);
 
-	inc %edi;				#´úÂë¶ÎGDTÏî
+	inc %edi;				#ä»£ç æ®µæè¿°ç¬¦
 	movl $0x0000ffff,(%ebx,%edi,4);
 	inc %edi;
 	movl $0x00c09800,(%ebx,%edi,4);
 
-	inc %edi;				#È«¾ÖÊı¾İ¶ÎGDTÏî
+	inc %edi;				#æ•°æ®æ®µæè¿°ç¬¦
 	movl $0x0000ffff,(%ebx,%edi,4);
 	inc %edi;
 	movl $0x00cf9200,(%ebx,%edi,4);
 
-	#ÏµÍ³¶ÑÕ»¶Î£¨TODO£©
+	#ÏµÍ³ï¿½ï¿½Õ»ï¿½Î£ï¿½TODOï¿½ï¿½
 
 	movw $0x07c0,%ax;
 	movw %ax,%ds;
 
-	movw $location_gdt,%bx;	#ÉèÖÃGDTÏàÓ¦ÊôĞÔ
+	movw $location_gdt,%bx;	#è®¾ç½®GDTå¯„å­˜å™¨çš„å±æ€§
 	movw $23,(%bx);
-	movl $0x10800,2(%bx)		#movl $0x10000,2(%bx) ¿¿¿¿¿
+	movl $0x10800,2(%bx)
 
-	lgdt location_gdt;		#¼ÓÔØGDTR
+	lgdt location_gdt;
 
 	popl %edi;
 	movl %ebp,%esp;
@@ -83,7 +75,7 @@ setup_gdt:					#Î´±£»¤Êı¾İ¶Î¼Ä´æÆ÷£¬¿ÉÄÜÓĞÎÊÌâ
 	ret;
 	
 	.globl setup_idt;
-setup_idt:				#ÉèÖÃ¿ÕIDT±í
+setup_idt:				#è®¾ç½®IDT
 	pushw $0;
 	pushl $0;
 	lidt (%esp);

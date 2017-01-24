@@ -1,25 +1,18 @@
-/*
- * boot.asm
- *
- *  Created on: 2016Äê12ÔÂ24ÈÕ
- *      Author: wangqchf
- */
-
 .code16
 .section .btext,"ax"
 .globl _start
 _start:
-	movw $0x07c0,%ax;	#ÉèÖÃ¶ÑÕ»¶ÎµØÖ·
+	movw $0x07c0,%ax;	#æ ˆæ®µå¯„å­˜å™¨
 	movw %ax,%ss;
-	movw $0x07c0,%ax;	#ÉèÖÃÊı¾İ¶ÎµØÖ·
+	movw $0x07c0,%ax;	#æ•°æ®æ®µå¯„å­˜å™¨
 	movw %ax,%ds;
-	movw $0xb800,%ax;	#ÉèÖÃ¸½¼Ó¶ÎµØÖ·Ö¸ÏòÏÔÊ¾Çø
+	movw $0xb800,%ax;	#é™„åŠ æ®µæŒ‡å‘æ˜¾ç¤ºåŒº
 	movw %ax,%es;
 
-	movw $0x0000,%sp;	#Õ»¶Î³¤¶È = 640K - ÊµÄ£Ê½´úÂë³¤¶È
+	movw $0x0000,%sp;	#æ ˆé•¿åº¦ = 640K - å®æ¨¡å¼ä»£ç é•¿åº¦
 
 	movw $loading,%si;
-	movw $0,%di;		#ÉèÖÃdiÖ¸Ïò»º³åÇø¿ªÊ¼
+	movw $0,%di;
 
 print_str_:
 	cld;
@@ -51,7 +44,7 @@ print_disk:
 	int $0x10;
 	jmp print_disk;
 
-stop:					#Í£»ú£¨·ÇÕı³£ÏÖÏó£©
+stop:
 	hlt;
 	jmp stop;
 
@@ -91,8 +84,8 @@ wait_ready24:
 	movw $256,%cx;
 	movw $0x07df,%bx;
 	movw %bx,%ds;
-	movw $0x0f,%bx;		#¼ÓÔØÏÂÒ»¸öÉÈÇøµ½¸ÃÉÈÇøÖ®ºó
-						#Èç´ËÒ»À´¾Í¿ÉÒÔÓÃjmpÖ¸ÁîÁË°É
+	movw $0x0f,%bx;		#åŠ è½½å‰©ä¸‹çš„æ‰‡åŒºåˆ°è¯¥æ‰‡åŒºå†…å­˜åœ°å€ä¹‹å
+						#å¦‚æ­¤å¯ç”¨ç›¸å¯¹è·³è½¬
 disk_ready24:
 	movw $0x01f0,%dx;
 	in %dx,%ax;
@@ -102,7 +95,7 @@ disk_ready24:
 	loop disk_ready24;
 	ret;
 
-lba48:					#LBA48Ä£Ê½µÄ¶ÁÓ²ÅÌ
+lba48:					#LBA48æ¨¡å¼ç£ç›˜è¯»æ“ä½œ
 						#ax
 	movw $0x01f1,%dx;
 	movw $0x00,%ax;
@@ -156,9 +149,7 @@ disk_ready48:
 read_disk:
 	movw $0x01f0,%dx;
 	in %dx,%ax;
-	movw %ax,(%bx);		#´Ë´¦Ô­Îªmovb %al,(%bx);£¬µ¼ÖÂÁËÒ»¸ö´íÎó
-						#¾ÍÊÇ³ÌĞòÖ»ÏÔÊ¾ÁËÒ»¸ö¡°s¡±×ÖÄ¸£¬È»ºó¾Í½áÊøÁË£¬ÒòÎªÆäºóµÄÄÚ´æ×Ö½ÚÊÇ¸ö0
-						#But£¬why???·¢ÏÖºÃÏñÄÚ´æºÜ¶àµÄÇøÓò¶¼±»0Ìî³äÁË£¬ÊÇÕû¸öÄÚ´æ¶¼±»0Ìî³äÁË£¿£¿
+	movw %ax,(%bx);
 	inc %bx;
 	inc %bx;
 	loop read_disk;

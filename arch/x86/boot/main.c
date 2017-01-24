@@ -1,10 +1,3 @@
-/*
- * main.c
- *
- *  Created on: 2017Äê1ÔÂ7ÈÕ
- *      Author: wangqchf
- */
-
 #include "init.h"
 
 void os_main(){

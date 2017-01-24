@@ -1,16 +1,9 @@
-/*
- * a20.c
- *
- *  Created on: 2017Äê1ÔÂ10ÈÕ
- *      Author: wangqchf
- */
-
 #include "init.h"
 
 u8 test_a20(){
 	u8 ok = 0;
 	u16 content = 0xabcd,saved = 0;
-	//Ğ´ÈëµØÖ·ÊÇÒıµ¼ÉÈÇø¼ÓÔØµÄµØÖ·
+	//å†™å…¥åœ°å€ä¸ºå¼•å¯¼æ‰‡åŒºæ‰€åœ¨å†…å­˜çš„å¼€å§‹
 	u16 addr = 0x7c00;
 	ldfs(0x0000);
 	ldgs(0xffff);
