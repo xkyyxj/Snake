@@ -9,7 +9,7 @@ _start:
 	movw $0xb800,%ax;	#附加段指向显示区
 	movw %ax,%es;
 
-	movw $0x0000,%sp;	#栈长度 = 640K - 实模式代码长度
+	movw $0xffff,%sp;	#栈长度 = 640K - 实模式代码长度 - 1
 
 	movw $loading,%si;
 	movw $0,%di;
