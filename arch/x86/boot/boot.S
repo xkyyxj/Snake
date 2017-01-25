@@ -6,7 +6,7 @@ _start:
 	movw %ax,%ss;
 	movw $0x07c0,%ax;	#数据段寄存器
 	movw %ax,%ds;
-	movw $0xb800,%ax;	#附加段指向显示区
+	movw $0x07c0,%ax;	#修改附加段同数据段等相同，解决movs等指令问题（附加段指向显示区）
 	movw %ax,%es;
 
 	movw $0xffff,%sp;	#栈长度 = 640K - 实模式代码长度 - 1
