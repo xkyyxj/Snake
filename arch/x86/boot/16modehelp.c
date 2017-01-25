@@ -5,7 +5,7 @@ void fastcall16 bios_put_cha(char cha){
 	reg.al = cha;
 	reg.ah = 0x0e;
 	reg.bx = 0x0007;
-	intcall(0x13,&reg);
+	intcall(0x10,&reg);
 }
 
 void bios_put_str(char *str){
