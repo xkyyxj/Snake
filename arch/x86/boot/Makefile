@@ -9,7 +9,7 @@ ASM_OUT := $(patsubst %.S,%.o,$(wildcard *.S))
 ALL_OUT := $(C_OUT)
 ALL_OUT += $(ASM_OUT)
 
-CC =gcc -c -m16 -nostdlib -O2 -fstrength-reduce
+CC =i686-elf-gcc -c -m16 -nostdlib -O2 -fstrength-reduce
 
 $(FINAL_BIN) : $(FINAL_O)
 	objcopy $(OBJCOPY_OPT) $(FINAL_O) $(FINAL_BIN)

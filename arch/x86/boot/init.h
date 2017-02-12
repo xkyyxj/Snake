@@ -5,7 +5,7 @@
  *      Author: wangqchf
  */
 
-#include "type.h"
+#include "../../../include/type.h"
 
 #ifndef ARCH_X86_BOOT_INIT_H_
 #define ARCH_X86_BOOT_INIT_H_
