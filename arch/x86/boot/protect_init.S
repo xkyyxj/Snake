@@ -19,9 +19,7 @@ init:
 	movw $0x0200,%ax;
 	int $0x10;
 
-	movw $0x0000,%si;		#不应使用汇编地址，因为加载地址不是0
-	movw $0x07e0,%ax;		#本段程序加载地址
-	movw %ax,%ds;
+	movw $pro_init_mes,%si;	#修正数据段寄存器，所以此处使用汇编偏移地址
 
 pro_print:					#打印信息
 	cld;
