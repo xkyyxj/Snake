@@ -86,6 +86,9 @@ wait_ready24:
 	movw %bx,%ds;
 	movw $0x0f,%bx;		#加载剩下的扇区到该扇区内存地址之后
 						#如此可用相对跳转
+
+	cli;
+
 disk_ready24:
 	movw $0x01f0,%dx;
 	in %dx,%ax;
@@ -139,7 +142,7 @@ wait_ready48:
 	cmpb $0x08,%al;
 	jnz wait_ready48;
 	
-	movw $0x07e0,%bx;
+	movw $0x07e0,%bx;	#此处修改了ds数据段寄存器，所以导致了许多莫名其妙的错误
 	movw %bx,%ds;
 	movw $0x00,%bx;
 	movw $5,%si;

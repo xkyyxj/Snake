@@ -6,7 +6,7 @@
 .globl os_main
 
 pro_init_mes:
-	.asciz "protect mode initialize..."
+	.asciz "protect mode initialize......"
 
 location_gdt:
 	.word 0x0000
@@ -14,6 +14,9 @@ location_gdt:
 
 	.globl init;
 init:
+	movw $0x07c0,%ax;		#因为读硬盘的时候修改了ds寄存器，此处修正过来
+	movw %ax,%ds;
+
 	movw $0x0200,%dx;		#设置光标位置：3行1列
 	xorw %bx,%bx;
 	movw $0x0200,%ax;
@@ -54,8 +57,6 @@ setup_gdt:					#设置GDT
 	movl $0x0000ffff,(%ebx,%edi,4);
 	inc %edi;
 	movl $0x00cf9200,(%ebx,%edi,4);
-
-	#ϵͳ��ջ�Σ�TODO��
 
 	movw $0x07c0,%ax;
 	movw %ax,%ds;
