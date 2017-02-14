@@ -67,6 +67,16 @@ void bios_put_str(char *str);
 
 void fastcall16 intcall(u8 call_nu,struct all_regs *regs);
 
+//目前仅提供第一页内的光标定位
+static inline void toPosition(u8 row,u8 column){
+	struct all_regs reg;
+	reg.dh = row;
+	reg.dl = column;
+	reg.ax = 0x0200;
+	reg.bx = 0x0000;//置页号为0
+	intcall(0x10,&reg);
+};
+
 static inline void wrfsw(u16 content,u16 addr){
 	asm volatile("movl %1,%%fs:%0;"::"m"(addr),"a"(content));
 }
@@ -93,6 +103,11 @@ static inline void fastcall16 ldfs(u16 fs){
 
 static inline void fastcall16 ldgs(u16 gs){
 	asm volatile("movw %ax,%gs;");
+}
+
+static inline void init_reg(struct all_regs* regs){
+	//TODO initialize struct all_regs
+	regs->eflags = 0x0100;//设置开启中断
 }
 
 #endif /* ARCH_X86_BOOT_INIT_H_ */

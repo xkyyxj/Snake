@@ -30,6 +30,7 @@ void open_a20(){
 	bios_put_str(str);
 	open_a20_fast();
 	if(!test_a20()){
-
+		toPosition(6,0);
+		bios_put_str("open a20 succuessful!!");
 	}
 }
