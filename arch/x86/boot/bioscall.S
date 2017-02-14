@@ -28,4 +28,9 @@ intcall:
 
 	popfl;
 	popal;
-	ret;
+
+	movl %ebp,%esp;
+	popl %ebp;
+
+	retl;	#此处使用的是近返回，只返回了IP，没有返回CS；但是压栈时压入了IP和CS，导致栈混乱
+			#此处修改使用远返回，发现Linux源码也是这样做的，为什么呢？？
