@@ -24,6 +24,8 @@ $(C_OUT) : %.o : %.c
 $(ASM_OUT) : %.o : %.S
 	$(AS) $@ $<
 
+.PHONY : clean
+
 clean :
 	-rm *.o
 	-rm *.bin

@@ -8,6 +8,9 @@
 pro_init_mes:
 	.asciz "protect mode initialize......"
 
+pro_finish:
+	.asciz "protect will finish.."
+
 location_gdt:
 	.word 0x0000
 	.long 0x0000
@@ -97,9 +100,21 @@ goto_protect:
 
 	cli;
 
+	movw $pro_finish,%si;
+
+pro_print1:
+	cld;
+	lodsb;
+	andb %al,%al;
+	jz go_pro;
+	movb $0x0e,%ah;
+	int $0x10;
+	jmp pro_print1;
+
 	movl %cr0,%ebx;
 	orl $0x0001,%ebx;
 	movl %ebx,%cr0;
+go_pro:
 
 	.byte 0x66,0xea;	#true long jump!!
 1:

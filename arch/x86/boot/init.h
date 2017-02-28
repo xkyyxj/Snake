@@ -1,10 +1,3 @@
-/*
- * init.h
- *
- *  Created on: 2017��1��7��
- *      Author: wangqchf
- */
-
 #include "../../../include/type.h"
 
 #ifndef ARCH_X86_BOOT_INIT_H_
@@ -64,6 +57,8 @@ void open_a20();
 void goto_hlt();		//for test
 
 void bios_put_str(char *str);
+
+void fastcall16 init_regs(struct all_regs* regs);
 
 void fastcall16 intcall(u8 call_nu,struct all_regs *regs);
 

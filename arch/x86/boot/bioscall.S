@@ -34,3 +34,18 @@ intcall:
 
 	retl;	#此处使用的是近返回，只返回了IP，没有返回CS；但是压栈时压入了IP和CS，导致栈混乱
 			#此处修改使用远返回，发现Linux源码也是这样做的，为什么呢？？
+
+
+.globl init_regs;
+.type init_regs, @function
+init_regs:		#初始化寄存器结构体为0，传入寄存器结构体地址
+	pushl %ecx;
+	pushl %eax;
+
+	xor %eax,%eax;
+	movw $9,%cx;
+	rep stosl;
+
+	popl %eax;
+	popl %ecx;
+	retl;
