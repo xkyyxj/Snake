@@ -15,3 +15,7 @@ void bios_put_str(char *str){
 		bios_put_cha(*(str - 1));
 }
 
+void io_delay(){
+	u16 port = 0x80;
+	asm volatile("outb %%al,%0"::"dN"(port));
+}

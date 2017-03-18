@@ -1,0 +1,50 @@
+PHONY := __build
+__build :
+
+src := $(obj)
+
+#该目录下需构建的C文件对应的.o列表，由该目录下的Makefile指定
+PHONY += $(build-in-c)
+build-in-c :=
+#该目录下需构建的汇编文件对应的.o列表，由该目录下的Makefile指定
+PHONY += $(build-in-s)
+build-in-s :=
+
+build := -f $(srctree)/Makefile.build obj
+
+PHONY += target
+include $(src)/Makefile
+
+include $(srctree)/Makefile.lib
+
+#处理要编译的文件的目录问题
+build-in-c := $(addprefix $(src)/,$(build-in-c))
+build-in-s := $(addprefix $(src)/,$(build-in-s))
+
+__build : target
+
+#相应目录下的Makefile会定义这个目标的命令
+target : make-build-in
+
+#确保先构建子目录，然后再将子目录下的内容构建成build-in.o
+make-build-in : $(subdirs) $(build-in-c) $(build-in-s)
+
+#将子目录当中的build-in.o及当前目录下的.o文件构建成一个build-in.o文件
+PHONY += make-build-in
+make-build-in :
+	$(LD) $(src)/build-in.o $(sub-build-in) $(build-in-c) $(build-in-s)
+
+#编译本目录下的C文件
+$(build-in-c) : %.o : %.c
+	@echo $(build-in-c)
+	$(CC) $@ $<
+
+#编译本目录下的汇编文件
+$(build-in-s) : %.o : %.S
+	$(AS) $@ $<
+
+PHONY += $(subdirs)
+$(subdirs) :
+	$(Q)$(MAKE) $(build)=$@
+
+.PHONY : $(PHONY)

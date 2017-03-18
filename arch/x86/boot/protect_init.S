@@ -35,7 +35,7 @@ pro_print:					#打印信息
 	movb $0x0e,%ah;
 	int $0x10;
 	jmp pro_print;
-	
+
 	.globl setup_gdt;
 setup_gdt:					#设置GDT
 	pushl %ebp;
@@ -75,7 +75,7 @@ setup_gdt:					#设置GDT
 	popl %ebp;
 
 	ret;
-	
+
 	.globl setup_idt;
 setup_idt:				#设置IDT
 	pushw $0;
@@ -124,7 +124,7 @@ go_pro:
 .code32
 .globl in_pm32;
 in_pm32:
-	jmp goto_hlt;
+	call start_32;
 	ret;
 
 	.globl goto_hlt;
@@ -134,6 +134,3 @@ goto_hlt:
 	hlt;
 	jmp 1b;
 	ret;			#never use!
-
-
-

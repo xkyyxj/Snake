@@ -1,0 +1,24 @@
+PHONY :=
+
+src := $(obj)
+
+#定义默认终极目标为clean，上一个版本当中没有定义，导致有些clean过程执行其他目标
+PHONY += clean
+clean :
+
+include $(src)/Makefile
+
+#PHONY += $(subdirs) 此处subdirs上没有赋值，因此会导致这个问题？
+#好像确实是，将上面一行搬到下面后就解决了不能进子目录的问题了
+include $(srctree)/Makefile.lib
+
+clean-param := -f $(srctree)/Makefile.clean obj
+
+PHONY += $(subdirs)
+clean : $(subdirs)
+
+$(subdirs) :
+	@echo $(subdirs)
+	$(Q)$(MAKE) $(clean-param)=$@ clean
+
+.PHONY : $(PHONY)

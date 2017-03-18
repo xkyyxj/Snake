@@ -72,6 +72,13 @@ static inline void toPosition(u8 row,u8 column){
 	intcall(0x10,&reg);
 };
 
+//发觉在Linux代码当中以及网上帖子看到的代码当中，很多写端口的操作后都会调用io_delay
+//此处参照了Linux源码当中的io_delay
+//原先此处是这样声明的：static inline void io_delay()
+//上述的声明方式会导致这个函数没有函数体，所以在汇编语言里面call的时候会有问题（没有函数地址）
+//此外就是上一个版本当中会在头文件当中定义函数体，导致多处定义的问题
+void io_delay();
+
 static inline void wrfsw(u16 content,u16 addr){
 	asm volatile("movl %1,%%fs:%0;"::"m"(addr),"a"(content));
 }

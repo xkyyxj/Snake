@@ -1,0 +1,6 @@
+tempdirs := $(patsubst %/,%,$(dirs))
+
+subdirs := $(addprefix $(src)/,$(tempdirs))
+
+#子目录当中需要构建起来的
+sub-build-in := $(addsuffix /build-in.o,$(subdirs))
