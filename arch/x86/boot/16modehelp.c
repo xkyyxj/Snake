@@ -19,3 +19,7 @@ void io_delay(){
 	u16 port = 0x80;
 	asm volatile("outb %%al,%0"::"dN"(port));
 }
+
+void loader_memcpy(u32 start, u32 destination, u32 length){
+	asm volatile("rep movsl;"::"c"(length),"D"(destination),"S"(start));
+}

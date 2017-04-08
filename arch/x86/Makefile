@@ -6,7 +6,11 @@ dirs := kernel/
 #target :
 #	$(Q)$(MAKE) -C $(src)/boot
 target :
+	ld -T$(src)/kernel.ld -S -nostdlib -o kernel.elf $(srctree)/_kernel $(src)/build-in.o
+	readelf -a $(srctree)/kernel.elf >> $(srctree)/kernel.map
 	$(Q)$(MAKE) -f $(src)/boot/Makefile obj=$(src)/boot
+
 clean :
 	$(Q)$(MAKE) -f $(src)/boot/Makefile obj=$(src)/boot clean
+	$(RM) $(srctree)/kernel.map
 	$(RM) $(src)/*.o

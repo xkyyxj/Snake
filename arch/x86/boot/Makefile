@@ -18,14 +18,15 @@ CC :=i686-elf-gcc -c -m16 -nostdlib -O2 -fstrength-reduce
 PHONY += $(FINAL_BIN) $(FINAL_O)
 
 target : $(FINAL_BIN)
+	gcc -o $(src)/final/build.exe $(src)/final/build.c
+	$(src)/final/build.exe $(FINAL_BIN) $(srctree)/kernel.elf $(src)/final/kernel.img
 
 $(FINAL_BIN) : $(FINAL_O)
 	objcopy $(OBJCOPY_OPT) $(FINAL_O) $(FINAL_BIN)
 
 $(FINAL_O) : $(ALL_OUT)
 	echo $(ALL_OUT)
-	ld -T$(src)/boot.ld -nostdlib -S -o $(FINAL_O) $(ALL_OUT) $(srctree)/kernel \
-	$(srctree)/arch/$(ARCH)/build-in.o
+	ld -T$(src)/boot.ld -nostdlib -S -o $(FINAL_O) $(ALL_OUT)
 
 $(C_OUT) : %.o : %.c
 	$(CC) -o $@ $<
@@ -37,3 +38,5 @@ $(ASM_OUT) : %.o : %.S
 clean :
 	$(RM) $(src)/*.o
 	$(RM) $(src)/*.bin
+	$(RM) $(src)/final/build.exe
+	$(RM) $(src)/final/kernel.img

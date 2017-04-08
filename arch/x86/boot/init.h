@@ -62,6 +62,10 @@ void fastcall16 init_regs(struct all_regs* regs);
 
 void fastcall16 intcall(u8 call_nu,struct all_regs *regs);
 
+void loader_memcpy(u32 start, u32 destination, u32 length);
+
+void analyze_kernel(u32 kernel_addr);
+
 //目前仅提供第一页内的光标定位
 static inline void toPosition(u8 row,u8 column){
 	struct all_regs reg;

@@ -111,7 +111,7 @@ lba48:					#LBA48模式磁盘读操作
 	movw $0x01f2,%dx;
 	movw $0x0000,%ax;
 	out %al,%dx;
-	movw $0x0005,%ax;
+	movw $0x0008,%ax;	#读磁盘的扇区数
 	out %al,%dx;
 
 	movb $0x00,%al;
@@ -142,7 +142,7 @@ lba48:					#LBA48模式磁盘读操作
 	movw $0x07e0,%bx;	#此处修改了ds数据段寄存器，所以导致了许多莫名其妙的错误
 	movw %bx,%ds;
 	movw $0x00,%bx;
-	movw $5,%si;
+	movw $8,%si;		#读磁盘的扇区数
 	movw $0,%cx;
 	jmp wait_ready48;
 		

@@ -54,18 +54,23 @@ setup_gdt:					#设置GDT
 	inc %edi;				#代码段描述符
 	movl $0x0000ffff,(%ebx,%edi,4);
 	inc %edi;
-	movl $0x00c09800,(%ebx,%edi,4);
+	movl $0x00409800,(%ebx,%edi,4);
 
-	inc %edi;				#数据段描述符
-	movl $0x0000ffff,(%ebx,%edi,4);
+	inc %edi;				#数据段描述符(基地址更改为加载地址，否则访问静态数据变量是会有错误的地址（根据汇编地址来的）)
+	movl $0x7c00ffff,(%ebx,%edi,4);
 	inc %edi;
-	movl $0x00cf9200,(%ebx,%edi,4);
+	movl $0x004f9200,(%ebx,%edi,4);
+
+	inc %edi;				#堆栈段描述符
+	movl $0x7c00ffff,(%ebx,%edi,4);
+	inc %edi;
+	movl $0x00409200,(%ebx,%edi,4);
 
 	movw $0x07c0,%ax;
 	movw %ax,%ds;
 
 	movw $location_gdt,%bx;	#设置GDT寄存器的属性
-	movw $23,(%bx);
+	movw $31,(%bx);
 	movl $0x10800,2(%bx)
 
 	lgdt location_gdt;
@@ -106,11 +111,12 @@ pro_print1:
 	cld;
 	lodsb;
 	andb %al,%al;
-	jz go_pro;
+	jz set_cr0;
 	movb $0x0e,%ah;
 	int $0x10;
 	jmp pro_print1;
 
+set_cr0:
 	movl %cr0,%ebx;
 	orl $0x0001,%ebx;
 	movl %ebx,%cr0;
@@ -124,6 +130,12 @@ go_pro:
 .code32
 .globl in_pm32;
 in_pm32:
+	movw $0x10,%ax;
+	movw %ax,%ds;
+	movw $0x18,%ax;
+	movw %ax,%ss;
+
+	pushl $0x1234;
 	call start_32;
 	ret;
 
@@ -134,3 +146,52 @@ goto_hlt:
 	hlt;
 	jmp 1b;
 	ret;			#never use!
+
+.globl detect_memory
+.type detect_memory, @function
+detect_memory:		#es:di the position of memory info
+
+.globl read_disk
+.type read_disk, @function
+read_disk:			#es:di 指向内存地址 ax：读写扇区数
+	pushal;
+
+	movw %ax,%bx;	#保存读取扇区数
+
+	movw $0x01f1,%dx;
+	movw $0x00,%ax;
+	out %al,%dx;
+	out %al,%dx;
+		
+	movw $0x01f2,%dx;#读磁盘的扇区数
+	movw %bx,%ax;
+	movw $8,%cx;
+	shrw %cl,%ax;
+	out %al,%dx;
+	movw %cx,%ax;	
+	out %al,%dx;
+
+	movb $0x00,%al;
+	movw $0x01f3,%dx;
+	out %al,%dx;
+
+	movb $0x01,%al;
+	out %al,%dx;
+
+	movw $0x01f4,%dx;
+	movb $0x00,%al;
+	out %al,%dx;
+
+	out %al,%dx;
+
+	movw $0x01f5,%dx;
+	out %al,%dx;
+	out %al,%dx;
+
+	movw $0x01f6,%dx;
+	movb $0x40,%al;
+	out %al,%dx;
+
+	movw $0x1f7,%dx;
+	movb $0x24,%al;
+	out %al,%dx;

@@ -7,7 +7,14 @@
 .code32
 .globl start_32
 start_32:
-    call init_8259A;
+    #call make_init;
+    #call console_init;
+    #call init_interrupt;
+    #call init_io_apic;
+    #call trap_init;
+1:
+    hlt;
+    jmp 1b;
 
 
 #初始化8258A中断芯片

@@ -1,7 +1,7 @@
 /*
  * type.h
  *
- *  Created on: 2017Äê1ÔÂ10ÈÕ
+ *  Created on: 2017ï¿½ï¿½1ï¿½ï¿½10ï¿½ï¿½
  *      Author: wangqchf
  */
 
@@ -15,5 +15,7 @@ typedef unsigned int __u32;
 typedef __u8 u8;
 typedef __u16 u16;
 typedef __u32 u32;
+
+typedef u8 bool;
 
 #endif /* ARCH_X86_BOOT_TYPE_H_ */

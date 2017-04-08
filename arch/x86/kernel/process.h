@@ -32,6 +32,22 @@ struct __attribute__((packed)) tss{
 	u16 low_io,io;
 };
 
+struct __attribute__((packed)) tss_entry {
+	u16 length;
+	u32 base_addr;
+};
+
+struct __attribute__((packed)) gdt {
+	u16 length;
+	u32 base_addr;
+};
+
+u16 install_seg_descriptor(bool in_gdt,u32 low_content,u32 high_content);
+
+void make_init();
+
+void make_kernel_tss();
+
 void make_gdt_descriptor();
 
 #endif /* ARCH_X86_BOOT_PROCESS_H_ */

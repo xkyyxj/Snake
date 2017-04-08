@@ -35,12 +35,13 @@ all : final
 
 #构建最终的内核二进制映像，最后处理与体系结构相关的内容
 PHONY += final
-final : kernel
+final : _kernel
 	$(Q)$(MAKE) $(build)=arch/$(ARCH)
+	@echo ================Build successful!!==============================
 
 #内核主体(强制执行，依赖一个强制目标)
-kernel : $(subdirs) FORCE
-	$(LD) kernel $(core-y)
+_kernel : $(subdirs) FORCE
+	$(LD) _kernel $(core-y)
 
 #构建各个子目录
 PHONY += $(subdirs)
@@ -58,7 +59,9 @@ clean-subdirs := $(addprefix __clean__,$(subdirs))
 PHONY += clean
 clean : $(clean-subdirs)
 	$(Q)$(MAKE) $(clean-param)=$(srctree)/arch/$(ARCH)
-	$(RM) kernel
+	$(RM) _kernel
+	$(RM) kernel.elf
+	@echo ====================Clean successful!!=========================
 
 $(clean-subdirs) :
 	$(Q)$(MAKE) $(clean-param)=$(patsubst __clean__%,%,$@)
