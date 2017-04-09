@@ -27,6 +27,8 @@ typedef void (*A_FUNC)();
 
 void set_trap_gate(u8 int_num,A_FUNC func);
 
+void init_interrupt();
+
 void keyboard_interrupt();
 
 #endif

@@ -21,5 +21,7 @@ void io_delay(){
 }
 
 void loader_memcpy(u32 start, u32 destination, u32 length){
-	asm volatile("rep movsl;"::"c"(length),"D"(destination),"S"(start));
+	//原先是想用movsl的，但是看网上帖子好像没有movsl？而且用movsl会导致不能够正确的移动数据
+	//而且在bochs上会导致sp莫名其妙的加1，导致返回地址错误；在virtualbox上也不能正常运行
+	asm volatile("rep movsb;"::"c"(length),"D"(destination),"S"(start));
 }

@@ -9,7 +9,7 @@ _start:
 	movw $0x07c0,%ax;	#修改附加段同数据段等相同，解决movs等指令问题（附加段指向显示区）
 	movw %ax,%es;
 
-	movw $0xffff,%sp;	#栈长度 = 640K - 实模式代码长度 - 1
+	movw $0xfffe,%sp;	#栈长度 = 640K - 实模式代码长度 - 1
 
 	movw $loading,%si;
 	movw $0,%di;
@@ -111,7 +111,7 @@ lba48:					#LBA48模式磁盘读操作
 	movw $0x01f2,%dx;
 	movw $0x0000,%ax;
 	out %al,%dx;
-	movw $0x0008,%ax;	#读磁盘的扇区数
+	movw $21,%ax;	#读磁盘的扇区数
 	out %al,%dx;
 
 	movb $0x00,%al;
@@ -142,7 +142,7 @@ lba48:					#LBA48模式磁盘读操作
 	movw $0x07e0,%bx;	#此处修改了ds数据段寄存器，所以导致了许多莫名其妙的错误
 	movw %bx,%ds;
 	movw $0x00,%bx;
-	movw $8,%si;		#读磁盘的扇区数
+	movw $21,%si;		#读磁盘的扇区数
 	movw $0,%cx;
 	jmp wait_ready48;
 		
@@ -196,7 +196,7 @@ read_disk:
 	loop read_disk;
 	
 	popw %cx;
-	call print_ds_16;
+	#call print_ds_16;
 	decw %si;
 	andw $0xff,%si;	# read five blocks
 	movw $0x01f7,%dx;
@@ -263,3 +263,7 @@ print_one:			#打印扇区内容，CX指定打印字节数
 
 .org 510
 .word 0xAA55
+
+kerner_start:
+	.long 0
+	.word 0;

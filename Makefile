@@ -24,7 +24,7 @@ src := $(srctree)
 build := -f $(srctree)/Makefile.build obj
 
 #定义需要编译的子目录
-dirs := drivers/
+dirs := drivers/ kernel/
 
 include $(srctree)/Makefile.lib
 

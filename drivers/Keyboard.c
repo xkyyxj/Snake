@@ -25,4 +25,5 @@ void keyboard_interrupt(){
     u8 code = 0;
     code = io_inb(0x60);//读入扫描码
     put_string("what???");
+    asm volatile("iret");
 }

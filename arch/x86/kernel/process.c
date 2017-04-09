@@ -1,7 +1,7 @@
 #include "process.h"
 
 //GDTR寄存器当中的内容
-static struct gdt current_gdt = {4 * 8 - 1,0x10800};
+static struct gdt current_gdt = {4 * 8 - 1,0x20000};
 
 void make_init(){
 	make_kernel_tss();
@@ -59,9 +59,7 @@ void make_tss(){
 u16 install_seg_descriptor(bool in_gdt,u32 low_content,u32 high_content){
 	u16 des_index = 0;
 	if(in_gdt) {
-		//下面的代码相当丑陋：首先就是内核被加载到0x7c00地址处，访问静态数据变量的指针是汇编地址，故而需要DS寄存器是0x7c00
-		//其次就是因为DS寄存器的内容是0x7c00，故而在写GDT内容的时候，需要将GDT基地址减去DS寄存器地址……
-		u32 *write_addr = (u32*)(current_gdt.length + 1 + current_gdt.base_addr - 0x7c00);
+		u32 *write_addr = (u32*)(current_gdt.length + 1 + current_gdt.base_addr);
 		*write_addr = low_content;
 		*(write_addr + 1) = high_content;
 		current_gdt.length += 8;

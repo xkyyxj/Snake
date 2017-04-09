@@ -42,9 +42,9 @@ setup_gdt:					#设置GDT
 	movl %esp,%ebp;
 
 	pushl %edi;
-	movw $0x1000,%ax;		#GDT表位于内存0x10800处
+	movw $0x2000,%ax;		#GDT表位于内存0x20000处
 	movw %ax,%ds;
-	movl $0x0800,%ebx;		#此处应该是用32位寄存器，不然GAS报错
+	movl $0x0000,%ebx;		#此处应该是用32位寄存器，不然GAS报错
 	movl $0x0000,%edi;
 
 	movl $0x00,(%ebx,%edi,4);	#空GDT项
@@ -54,12 +54,13 @@ setup_gdt:					#设置GDT
 	inc %edi;				#代码段描述符
 	movl $0x0000ffff,(%ebx,%edi,4);
 	inc %edi;
-	movl $0x00409800,(%ebx,%edi,4);
+	movl $0x00cf9800,(%ebx,%edi,4);	#此处原先的段属性是0x00409800，故而kernel开始地址0x10000超出段界限
+									#这个bug好烦人（kernel的加载地址由kernel.ld文件指定，并由loader_main.c解析）
 
 	inc %edi;				#数据段描述符(基地址更改为加载地址，否则访问静态数据变量是会有错误的地址（根据汇编地址来的）)
-	movl $0x7c00ffff,(%ebx,%edi,4);
+	movl $0x0000ffff,(%ebx,%edi,4);
 	inc %edi;
-	movl $0x004f9200,(%ebx,%edi,4);
+	movl $0x00cf9200,(%ebx,%edi,4);
 
 	inc %edi;				#堆栈段描述符
 	movl $0x7c00ffff,(%ebx,%edi,4);
@@ -71,7 +72,7 @@ setup_gdt:					#设置GDT
 
 	movw $location_gdt,%bx;	#设置GDT寄存器的属性
 	movw $31,(%bx);
-	movl $0x10800,2(%bx)
+	movl $0x20000,2(%bx)
 
 	lgdt location_gdt;
 
@@ -135,8 +136,8 @@ in_pm32:
 	movw $0x18,%ax;
 	movw %ax,%ss;
 
-	pushl $0x1234;
-	call start_32;
+	movw $0x7e00,%eax;
+	jmpl *(%eax);		#以前错误的写成了jmpl *%eax，这样会跳转到0x7e00处执行，导致错误
 	ret;
 
 	.globl goto_hlt;
