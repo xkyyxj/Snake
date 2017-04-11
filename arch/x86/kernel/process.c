@@ -16,7 +16,7 @@ void make_kernel_tss(){
 	//此前是在1020处，紧随IDT，但是bochs发现这里有数据，改为0x7c00处
 	struct tss *new_tss = (struct tss*)0x7c00;
 
-	//新建特权级堆栈
+	//新建特权级堆栈(开始地址：0x20000)
 	u32 low_content = 0x0000ffff;
 	u32 high_content = 0x00409202;
 	u16 stack_index = install_seg_descriptor(1,low_content,high_content);
@@ -29,9 +29,9 @@ void make_kernel_tss(){
 
 	//清空tss存储区域
 	mem_clear(0x7c00,sizeof(struct tss));
-	
+
 	new_tss->ss0 = stack_index;
-	new_tss->esp0 = 0xfff;
+	new_tss->esp0 = 0xffff;
 	new_tss->pre_tss = 0;
 
 	//加载kernel的TSS到TSS段寄存器
@@ -58,7 +58,7 @@ void make_stack_descriptor(u32 base_addr, u32 length, u8 s_dpl_type){
 
 void make_tss(){
 	struct tss new_tss;
-	
+
 }
 
 u16 install_seg_descriptor(bool in_gdt,u32 low_content,u32 high_content){

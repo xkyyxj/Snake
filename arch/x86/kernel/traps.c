@@ -40,6 +40,7 @@ void trap_init(){
 }
 
 //空中断处理函数 ，什么都不做，直接返回
-void __attribute__((regparm(0))) empty_int(){
-    asm volatile("iret;");
-}
+//void __attribute__((regparm(0))) empty_int(){
+//    put_string("a");
+//    asm volatile("iret;");
+//}

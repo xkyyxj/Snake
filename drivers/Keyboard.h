@@ -4,6 +4,7 @@
 #include "../include/type.h"
 #include "../include/asm_help.h"
 #include "console.h"
+#include "../arch/x86/kernel/apic/apic.h"
 
 #define CAPS_LOCK 1     //大写键按下
 #define L_SHIFT 2       //左Shift键按下

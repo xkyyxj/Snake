@@ -2,6 +2,7 @@
 #define ARCH_X86_KERNEL_TRAPS_H_
 
 #include "../../../include/type.h"
+#include "../../../drivers/console.h"
 
 #define IDT_START 0 //IDT起始地址
 

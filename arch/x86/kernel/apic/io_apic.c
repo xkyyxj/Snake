@@ -1,4 +1,4 @@
-#include "../../../../include/type.h"
+#include "apic.h"
 
 static volatile u32 *_addr_select = (u32*)0xfec00000;
 

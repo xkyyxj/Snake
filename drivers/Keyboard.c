@@ -21,9 +21,13 @@ void init_interrupt(){
 }
 
 //键盘中断处理程序
-void __attribute__((regparm(0))) keyboard_interrupt(){
+//对于这种中断处理函数应该用汇编写的（这是由在empty_int函数当中打印字符串得到的呃灵感）
+//像是这个函数，在这里我们在函数当中声明了许多的变量，然后栈指针向下减少
+//然后调用了iret指令，那么肯定是返回地址错误了啊
+/*void __attribute__((regparm(0))) keyboard_interrupt(){
     u8 code = 0;
     code = io_inb(0x60);//读入扫描码
-    put_string("what???");
+    put_string("what1234");
+    io_apic_eoi();
     asm volatile("iret");
-}
+}*/

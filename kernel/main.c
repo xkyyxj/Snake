@@ -17,6 +17,8 @@ void kernel_main(){
     //测试console.c打印字符串功能
     put_string("Hello world!!");
 
+    put_string("what?");
+
     //打开中断
     asm volatile("sti;");
 
