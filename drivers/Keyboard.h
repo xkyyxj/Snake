@@ -23,12 +23,12 @@ struct __attribute__((packed)) code_ascii_list{
     u8 all_ascii[83];
 };
 
-typedef void (*A_FUNC)();
+typedef void __attribute__((regparm(0))) (*A_FUNC)();
 
 void set_trap_gate(u8 int_num,A_FUNC func);
 
 void init_interrupt();
 
-void keyboard_interrupt();
+void __attribute__((regparm(0))) keyboard_interrupt();
 
 #endif

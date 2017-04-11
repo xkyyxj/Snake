@@ -14,6 +14,9 @@ void kernel_main(){
     init_io_apic();
     init_interrupt();
 
+    //测试console.c打印字符串功能
+    put_string("Hello world!!");
+
     //打开中断
     asm volatile("sti;");
 

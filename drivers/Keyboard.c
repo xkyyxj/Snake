@@ -21,7 +21,7 @@ void init_interrupt(){
 }
 
 //键盘中断处理程序
-void keyboard_interrupt(){
+void __attribute__((regparm(0))) keyboard_interrupt(){
     u8 code = 0;
     code = io_inb(0x60);//读入扫描码
     put_string("what???");

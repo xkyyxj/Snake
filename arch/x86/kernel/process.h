@@ -2,6 +2,7 @@
 #define ARCH_X86_BOOT_PROCESS_H_
 
 #include "../../../include/type.h"
+#include "../../../include/m_block.h"
 
 struct __attribute__((packed)) tss{
 	u16 pre_tss,void1;

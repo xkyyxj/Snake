@@ -16,7 +16,7 @@ void set_trap_gate(u8 num,INT_FUNC func){
 
     //中断描述的属性（第三个字）
     //DPL = 0
-    start->attribute = 0x8f00;
+    start->attribute = 0x8e00;
 }
 
 struct idtr_struct{
@@ -40,6 +40,6 @@ void trap_init(){
 }
 
 //空中断处理函数 ，什么都不做，直接返回
-void empty_int(){
+void __attribute__((regparm(0))) empty_int(){
     asm volatile("iret;");
 }

@@ -2,7 +2,7 @@
 
 void mem_clear(u32 start, u32 length){
     asm volatile("cld\n\t"
-                 "rep stosl":
+                 "rep stosb":
                  :"a"(0),"c"(length),"D"(start));
 }
 
