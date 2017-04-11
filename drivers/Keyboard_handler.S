@@ -15,6 +15,7 @@ keyboard_interrupt:
     #但是现在从端口读出键盘扫描码之后就可以多次响应中断了……
     movl $0x60,%edx;
     inb %dx,%al;
+    #另外就是写EOI Register去掉后中断也不能正常响应
     call io_apic_eoi;
 
     popl %edx;

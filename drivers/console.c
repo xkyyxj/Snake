@@ -41,8 +41,12 @@ void out_bound_CRLF() {
     u32 desi_addr = 0xb8000;
     u32 length = 24 * 80 * 2 / 2;
     asm volatile("rep movsw;"::"S"(start_addr),"D"(desi_addr),"c"(length));
+
+    //清理最后一行对应的显示区域
+    mem_clear(0xb8000 + 24 * 80 * 2,80 * 2);
+
     struct cursor position;
-    position.x = 23;
+    position.x = 24;
     position.y = 0;
     mov_cursor(position);
 }
@@ -70,7 +74,7 @@ void next_cursor() {
 
 /**
  * 将光标移动到指定位置
- * 
+ *
  * @param position 含有光标的位置信息
  *
  */
