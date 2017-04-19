@@ -22,4 +22,6 @@ void out_bound_CRLF();
 
 bool mov_cursor(struct cursor position);
 
+void next_line();
+
 #endif

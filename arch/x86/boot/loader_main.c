@@ -8,6 +8,8 @@ void os_main(){
 
 	open_a20();
 
+	detect_memory();
+
 	//不知道这种做法好不好，boot和loader总共合计占据五个扇区，五个扇区后就是kernel
 	//故而有下面的地址（这个是由build.c控制的）
 	analyze_kernel(512 * 5);

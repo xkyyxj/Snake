@@ -15,9 +15,10 @@ void kernel_main(){
     init_interrupt();
 
     //测试console.c打印字符串功能
-    put_string("Hello world!!");
+    put_string("Welcome to Snake!");
+    next_line();
 
-    put_string("what?");
+    //put_string("what?");
 
     //打开中断
     asm volatile("sti;");

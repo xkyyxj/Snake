@@ -72,6 +72,17 @@ void next_cursor() {
     }
 }
 
+void next_line(){
+    struct cursor position;
+    if(cur_posi.x < 24){
+        position.x = cur_posi.x + 1;
+        position.y = 0;
+        mov_cursor(position);
+    }
+    else
+        out_bound_CRLF();
+}
+
 /**
  * 将光标移动到指定位置
  *

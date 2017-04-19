@@ -44,7 +44,7 @@ struct all_regs{
 	};
 };
 
-//void detect_memory(); TODO detect memory!!
+void detect_memory();
 
 void goto_protect();
 
