@@ -148,10 +148,6 @@ goto_hlt:
 	jmp 1b;
 	ret;			#never use!
 
-.globl detect_memory
-.type detect_memory, @function
-detect_memory:		#es:di the position of memory info
-
 .globl read_disk
 .type read_disk, @function
 read_disk:			#es:di 指向内存地址 ax：读写扇区数

@@ -37,4 +37,11 @@ void init_io_apic(){
     write_register(0x13,high_keyboard_ent);
     //u32 low_keyboard_ent = 0x2021;
     //write_register(0x12,low_keyboard_ent);
+	
+	
+	//初始化IDE0传输控制器对应的IO-APIC向量表 0x2C-0x2D
+	/*u32 disk_entry_part = 0x202e;
+	write_register(0x2c,disk_entry_part);
+	disk_entry_part = 0x0 | (local_apic_id << 24);
+	write_register(0x2d,disk_entry_part);*/	
 }

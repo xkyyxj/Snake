@@ -4,6 +4,14 @@
 #include "../../../include/type.h"
 #include "../../../include/m_block.h"
 
+struct __attribute__((packed)) processe_info{
+	struct tss *my_tss;
+	u8 state;
+	struct pro_mem_info *start;
+	
+	struct processe_info *pre,*next;
+};
+
 struct __attribute__((packed)) tss{
 	u16 pre_tss,void1;
 	u32 esp0;
