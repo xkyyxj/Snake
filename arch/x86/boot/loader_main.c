@@ -1,7 +1,10 @@
 #include "init.h"
 #include "../../../include/elf_info.h"
 
+boot_info* sys_info = (boot_info*)0xA00;
+
 void os_main(){
+
 	setup_gdt();
 
 	//setup_idt();
@@ -12,7 +15,7 @@ void os_main(){
 
 	//不知道这种做法好不好，boot和loader总共合计占据五个扇区，五个扇区后就是kernel
 	//故而有下面的地址（这个是由build.c控制的）
-	analyze_kernel(512 * 5);
+	analyze_kernel(BOOT_LOADER_LENGTH + MAX_SYSTEMINFO_LENGTH);
 
 	goto_protect();
 
@@ -56,4 +59,110 @@ void analyze_kernel(u32 kernel_addr){
 
 	//最后执行跳转，跳转到kernel当中
 	//asm volatile("ljmp *%0"::"m"(start));
+}
+
+//内存探测函数
+void detect_memory() {
+	/*if(detect_memory_e820())
+		return;
+	else if(detect_memory_e801()) {
+		//将e801方式探测到的内存转换为e820格式，只有两个16位的数字，内存地址保存地址见mem_detect.S文件
+		u16 less_16M_num = *((u16*)(BOOT_LOADER_LENGTH + 4));
+		u16 more_16M_num = *((u16*)(BOOT_LOADER_LENGTH + 6));
+
+		struct loader_addr_range_desc* mem_range = (struct loader_addr_range_desc*)(BOOT_LOADER_LENGTH + 4);
+
+		//低于16M的内存地址
+		mem_range->base_addr_low = 0x100000;//低于16M的内存地址是从1M起始么？
+		mem_range->base_addr_high = 0;
+		mem_range->length_low = less_16M_num << 10;	//低于16M是以KB为单位的，此处转为以B为单位
+		mem_range->length_high = 0;
+		mem_range->type = 1;	//对应于e820当中的AddressRangeMemory，表示内存可用
+
+		//高于16M的内存地址
+		mem_range++;
+		mem_range->base_addr_low = 0x1000000;//高于16M的内存地址应当是从16M起始的吧
+		mem_range->base_addr_high = 0;
+		mem_range->length_low = less_16M_num << 16;	//高于16M是以64KB为单位的，此处转为以B为单位
+		mem_range->length_high = 0;
+		mem_range->type = 1;	//对应于e820当中的AddressRangeMemory，表示内存可用
+
+		return;
+	}
+	else
+		//TODO -- 最原始的BIOS探测内存方式实现
+		return;*/
+
+	if(detect_mem_e820())
+		return;
+	else if(detect_mem_e801())
+		return;
+	else
+		//TODO --最原始的内存探测方式
+		return;
+
+}
+
+bool detect_mem_e820() {
+	u8 block_count = 0;
+	struct all_regs reg;
+	loader_memset(&reg,sizeof(struct all_regs),0);
+	do{
+		reg.edi = BOOT_LOADER_LENGTH + sizeof(boot_info);
+		reg.eax = 0xe820;
+		reg.ecx = 20;
+		reg.edx = 0x534d4150;
+
+		intcall(0x15,&reg);
+
+		//CF进位标识被置位，表明出错
+		if(reg.eflags & CF_FLAGS)
+			return 0;
+
+		if(reg.edx != 0x534d4150)
+			return 0;
+
+		block_count++;
+	}
+	while(reg.ebx != 0);
+
+	sys_info->mem_block_number = block_count;
+
+	return 1;
+}
+
+bool detect_mem_e801() {
+	struct all_regs reg;
+	loader_memset(&reg,sizeof(struct all_regs),0);
+
+	reg.eax = 0xe801;
+
+	intcall(0x15,&reg);
+
+	if(reg.eflags & CF_FLAGS)
+		return 0;
+
+	if(reg.ax == 0) {
+		reg.ax = reg.cx;
+		reg.bx = reg.dx;
+	}
+
+	struct loader_addr_range_desc* mem_range = (struct loader_addr_range_desc*)(BOOT_LOADER_LENGTH + sizeof(boot_info));
+	mem_range->base_addr_low = 0x100000;//低于16M的内存地址是从1M起始么？
+	mem_range->base_addr_high = 0;
+	mem_range->length_low = reg.ax << 10;	//低于16M是以KB为单位的，此处转为以B为单位
+	mem_range->length_high = 0;
+	mem_range->type = 1;	//对应于e820当中的AddressRangeMemory，表示内存可用
+
+	mem_range++;
+
+	mem_range->base_addr_low = 0x1000000;//高于16M的内存地址应当是从16M起始的吧
+	mem_range->base_addr_high = 0;
+	mem_range->length_low = reg.bx << 16;	//高于16M是以64KB为单位的，此处转为以B为单位
+	mem_range->length_high = 0;
+	mem_range->type = 1;	//对应于e820当中的AddressRangeMemory，表示内存可用
+
+	sys_info->mem_block_number = 2;
+
+	return 1;
 }

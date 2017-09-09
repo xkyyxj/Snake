@@ -22,6 +22,7 @@ target : $(FINAL_BIN)
 	$(src)/final/build.exe $(FINAL_BIN) $(srctree)/kernel.elf $(src)/final/kernel.img
 
 $(FINAL_BIN) : $(FINAL_O)
+	readelf -a $(FINAL_O) >> $(src)/boot.map
 	objcopy $(OBJCOPY_OPT) $(FINAL_O) $(FINAL_BIN)
 
 $(FINAL_O) : $(ALL_OUT)
@@ -38,5 +39,6 @@ $(ASM_OUT) : %.o : %.S
 clean :
 	$(RM) $(src)/*.o
 	$(RM) $(src)/*.bin
+	$(RM) $(src)/boot.map
 	$(RM) $(src)/final/build.exe
 	$(RM) $(src)/final/kernel.img

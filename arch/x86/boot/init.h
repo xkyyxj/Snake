@@ -5,6 +5,15 @@
 
 #define fastcall16 __attribute__((regparm(3)))
 
+//定义Boot和Loader的最大长度 (512 * 5，5个扇区的大小)
+#define BOOT_LOADER_LENGTH 0xA00
+
+//定义Loader传递给Kernel的信息的最大长度(两个扇区的大小)
+#define MAX_SYSTEMINFO_LENGTH 1024
+
+//CF标志位置位的FLAGS
+#define CF_FLAGS 1
+
 struct all_regs{
 	union{
 		struct{
@@ -44,7 +53,25 @@ struct all_regs{
 	};
 };
 
+struct loader_addr_range_desc{
+    u32 base_addr_low;
+    u32 base_addr_high;
+    u32 length_low;
+    u32 length_high;
+	u32 type;
+};
+
 void detect_memory();
+
+bool detect_memory_e820();
+
+bool detect_memory_e801();
+
+//C形式的内存探测函数
+bool detect_mem_e820();
+
+//C形式的内存探测函数
+bool detect_mem_e801();
 
 void goto_protect();
 
@@ -63,6 +90,8 @@ void fastcall16 init_regs(struct all_regs* regs);
 void fastcall16 intcall(u8 call_nu,struct all_regs *regs);
 
 void loader_memcpy(u32 start, u32 destination, u32 length);
+
+void loader_memset(void* pointer,u8 length,u8 value);
 
 void analyze_kernel(u32 kernel_addr);
 
@@ -115,5 +144,14 @@ static inline void init_reg(struct all_regs* regs){
 	//TODO initialize struct all_regs
 	regs->eflags = 0x0100;//设置开启中断
 }
+
+//boot传递给内核的参数信息（通过BIOS获取到的以及其他的一些信息）
+typedef struct {
+	u32 kernel_start,kernel_end;	//内存当中的绝对物理地址
+	u32 mem_block_number;			//初始化时的内存区块数
+	//剩下的部分存储内存区块数据
+} boot_info;
+
+extern boot_info* sys_info;
 
 #endif /* ARCH_X86_BOOT_INIT_H_ */

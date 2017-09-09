@@ -26,6 +26,21 @@ intcall:
 	.byte 0xcd;	#real interrupt call
 1:	.byte 0x00;	#call_number
 
+	#将寄存器重新压入栈中，并且构建C环境当中的变量
+	pushfl;
+	pushal;
+
+	#重新获取EDX，用于构建C环境结构体变量
+	addl $44,%esp;
+	movl (%esp),%edx;
+	movl %edx,%edi;
+	movl %esp,%esi;
+	movl $9,%ecx;
+	rep movsd;
+
+	#恢复esp指针
+	subl $8,%esp;
+
 	popfl;
 	popal;
 

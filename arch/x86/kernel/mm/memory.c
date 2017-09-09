@@ -1,4 +1,5 @@
 #include "memory.h"
+#include "../kernel.h"
 
 static struct memory_info_entry mem_info[MEM_ENTRY_NUM];
 
@@ -32,10 +33,13 @@ static struct memory_info_entry *start_entry = 0;
 }*/
 
 void init_mem_info(){
-	u32 mem_lock_num = *((u32*)0x7c00 + 2048);
+	boot_info* sys_info = (boot_info*)(0x7c00 + BOOT_LOADER_LENGTH);
+	u32 mem_lock_number = sys_info->mem_block_number;
 	struct memory_info_entry *temp_entry,*previouse_entry = 0;
-	struct addr_range_desc *mem_info_start = (struct addr_range_desc*)(0x7c00 + 2052);
-	for(int i = 0;i < MEM_ENTRY_NUM;i++){
+	struct addr_range_desc *mem_info_start = (struct addr_range_desc*)(0x7c00 + BOOT_LOADER_LENGTH + 4);
+	//TODO --是不是要考虑下内核这个特权客户占用的内存？
+
+	for(int i = 0;i < mem_lock_num;i++){
 		//TODO-暂未考虑64位内存状况
 		temp_entry = (struct memory_info_entry*)mem_info_start->base_addr_low;
 		

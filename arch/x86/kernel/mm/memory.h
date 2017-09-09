@@ -8,6 +8,8 @@
 #define ADDRESS_RANGE_FREE 1
 #define ADDRESS_RANGE_RESERVED 2
 
+#define BOOT_LOADER_LENGTH 0xA00
+
 #define MEM_ENTRY_NUM 6
 
 #define IN_USE 0

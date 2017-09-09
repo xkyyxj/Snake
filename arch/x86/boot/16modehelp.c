@@ -25,3 +25,7 @@ void loader_memcpy(u32 start, u32 destination, u32 length){
 	//而且在bochs上会导致sp莫名其妙的加1，导致返回地址错误；在virtualbox上也不能正常运行
 	asm volatile("rep movsb;"::"c"(length),"D"(destination),"S"(start));
 }
+
+void loader_memset(void* pointer,u8 length,u8 value) {
+	asm volatile("cld;rep stosb;"::"a"(value),"D"(pointer),"c"(length));
+}
