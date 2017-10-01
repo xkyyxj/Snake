@@ -34,9 +34,11 @@ static struct memory_info_entry *start_entry = 0;
 
 void init_mem_info(){
 	boot_info* sys_info = (boot_info*)(0x7c00 + BOOT_LOADER_LENGTH);
-	u32 mem_lock_number = sys_info->mem_block_number;
+	//因为ELF格式文件编译出来是采用了平坦模型，故而我们在这儿可以把elf文件占用内存后面的内存区域当做内存数据区域
+	mem_info = (struct memory_info_entry*)sys_info->kernel_end;
+	u32 mem_lock_num = sys_info->mem_block_number;
 	struct memory_info_entry *temp_entry,*previouse_entry = 0;
-	struct addr_range_desc *mem_info_start = (struct addr_range_desc*)(0x7c00 + BOOT_LOADER_LENGTH + 4);
+	struct addr_range_desc *mem_info_start = (struct addr_range_desc*)(0x7c00 + BOOT_LOADER_LENGTH + sizeof(boot_info));
 	//TODO --是不是要考虑下内核这个特权客户占用的内存？
 
 	for(int i = 0;i < mem_lock_num;i++){
@@ -57,11 +59,11 @@ void init_mem_info(){
 			}
 			else{
 				start_entry = temp_entry;
-				start_entry->previouse = (struct memory_info_entry*)-1;
+				start_entry->previouse = 0;
 			}
 			previouse_entry = temp_entry;
-			if(i == (MEM_ENTRY_NUM - 1)){
-				temp_entry->next = (struct memory_info_entry*)-1;
+			if(i == (mem_lock_num - 1)){
+				temp_entry->next = 0;
 			}
 		}
 		mem_info_start++;
@@ -86,7 +88,7 @@ void print_u32(u32 print_content){
 
 void print_memory(){
 	u32 temp_print = 0;
-	for(int i = 0;i < MEM_ENTRY_NUM;i++){
+	/*for(int i = 0;i < MEM_ENTRY_NUM;i++){
 		//打印内存起始地址
 		temp_print = mem_info[i].base_addr_low;
 		put_string("base:");
@@ -96,6 +98,17 @@ void print_memory(){
 		put_string("length:");
 		print_u32(temp_print);
 		next_line();
+	}*/
+	struct memory_info_entry* temp = start_entry;
+
+	while(temp) {
+		temp_print = temp->base_addr_low;
+		put_string("base:");
+		print_u32(temp_print);
+		temp_print = temp->length_low;
+		put_string("length:");
+		print_u32(temp_print);
+		temp = temp->next;
 	}
 }
 

@@ -7,6 +7,7 @@ void fastcall16 bios_put_cha(char cha){
 	reg.ah = 0x0e;
 	reg.bx = 0x0007;
 	reg.cx = 0x0001;
+	reg.eflags = 0;
 	intcall(0x10,&reg);
 }
 

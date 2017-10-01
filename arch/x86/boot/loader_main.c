@@ -57,6 +57,9 @@ void analyze_kernel(u32 kernel_addr){
 		}
 	}
 
+	sys_info->kernel_start = phdr->p_vaddr;
+	sys_info->kernel_end = phdr->p_vaddr + phdr->p_memsz;
+
 	//最后执行跳转，跳转到kernel当中
 	//asm volatile("ljmp *%0"::"m"(start));
 }
@@ -107,12 +110,13 @@ bool detect_mem_e820() {
 	u8 block_count = 0;
 	struct all_regs reg;
 	loader_memset(&reg,sizeof(struct all_regs),0);
+	
+	reg.edi = BOOT_LOADER_LENGTH + sizeof(boot_info);
+	reg.eax = 0xe820;
+	reg.ecx = 20;
+	reg.edx = 0x534d4150;
+	
 	do{
-		reg.edi = BOOT_LOADER_LENGTH + sizeof(boot_info);
-		reg.eax = 0xe820;
-		reg.ecx = 20;
-		reg.edx = 0x534d4150;
-
 		intcall(0x15,&reg);
 
 		//CF进位标识被置位，表明出错
@@ -141,16 +145,21 @@ bool detect_mem_e801() {
 
 	if(reg.eflags & CF_FLAGS)
 		return 0;
+	
+	//低于16M的物理内存当中可用内存不可能大于15M
+	if(reg.ax > 15 * 1024)
+		return 0;
 
-	if(reg.ax == 0) {
+	if(reg.ax == 0 || reg.bx == 0) {
 		reg.ax = reg.cx;
 		reg.bx = reg.dx;
 	}
 
-	struct loader_addr_range_desc* mem_range = (struct loader_addr_range_desc*)(BOOT_LOADER_LENGTH + sizeof(boot_info));
+	//下面的问题需要纠正一下，似乎在实模式下用32位寄存器进行移位操作是不可行，因此下面如果移位的话会产生错误数据
+	/*struct loader_addr_range_desc* mem_range = (struct loader_addr_range_desc*)(BOOT_LOADER_LENGTH + sizeof(boot_info));
 	mem_range->base_addr_low = 0x100000;//低于16M的内存地址是从1M起始么？
 	mem_range->base_addr_high = 0;
-	mem_range->length_low = reg.ax << 10;	//低于16M是以KB为单位的，此处转为以B为单位
+	mem_range->length_low = reg.eax << 10;	//低于16M是以KB为单位的，此处转为以B为单位
 	mem_range->length_high = 0;
 	mem_range->type = 1;	//对应于e820当中的AddressRangeMemory，表示内存可用
 
@@ -158,11 +167,18 @@ bool detect_mem_e801() {
 
 	mem_range->base_addr_low = 0x1000000;//高于16M的内存地址应当是从16M起始的吧
 	mem_range->base_addr_high = 0;
-	mem_range->length_low = reg.bx << 16;	//高于16M是以64KB为单位的，此处转为以B为单位
+	mem_range->length_low = reg.ebx << 16;	//高于16M是以64KB为单位的，此处转为以B为单位
+	mem_range->length_high = 0;
+	mem_range->type = 1;	//对应于e820当中的AddressRangeMemory，表示内存可用*/
+	
+	struct loader_addr_range_desc* mem_range = (struct loader_addr_range_desc*)(BOOT_LOADER_LENGTH + sizeof(boot_info));
+	mem_range->base_addr_low = 0x400;
+	mem_range->base_addr_high = 0;
+	mem_range->length_low = reg.eax + (reg.ebx << 6);
 	mem_range->length_high = 0;
 	mem_range->type = 1;	//对应于e820当中的AddressRangeMemory，表示内存可用
 
-	sys_info->mem_block_number = 2;
+	sys_info->mem_block_number = 1;
 
 	return 1;
 }

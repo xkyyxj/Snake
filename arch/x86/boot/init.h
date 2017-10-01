@@ -63,10 +63,6 @@ struct loader_addr_range_desc{
 
 void detect_memory();
 
-bool detect_memory_e820();
-
-bool detect_memory_e801();
-
 //C形式的内存探测函数
 bool detect_mem_e820();
 
@@ -138,11 +134,6 @@ static inline void fastcall16 ldfs(u16 fs){
 
 static inline void fastcall16 ldgs(u16 gs){
 	asm volatile("movw %ax,%gs;");
-}
-
-static inline void init_reg(struct all_regs* regs){
-	//TODO initialize struct all_regs
-	regs->eflags = 0x0100;//设置开启中断
 }
 
 //boot传递给内核的参数信息（通过BIOS获取到的以及其他的一些信息）
